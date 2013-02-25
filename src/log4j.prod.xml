@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!--<appender name="stdout" class="org.apache.log4j.ConsoleAppender">-->
+        <!--<layout class="org.apache.log4j.PatternLayout">-->
+            <!--<param name="ConversionPattern" value="%d [%-5p] %c %x - %m%n"/>-->
+        <!--</layout>-->
+    <!--</appender>-->
+
+    <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="100000"/>
+        <appender-ref ref="FileAppender1"/>
+        <appender-ref ref="syslog"/>
+    </appender>
+
+    <appender name="FileAppender1" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="tomcat/logs/jmxproxy.log" />
+        <param name="append" value="true" />
+        <param name="encoding" value="UTF-8" />
+
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="asyncRequestLog" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="100000"/>
+        <appender-ref ref="requestLogAppender"/>
+    </appender>
+
+    <appender name="syslog" class="org.apache.log4j.net.SyslogAppender">
+        <param name="syslogHost" value="syslogserver" />
+        <param name="facility" value="LOCAL6" />
+        <param name="facilityPrinting" value="true" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d AppBadger [%t] %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="org"><level value="INFO"/></logger>
+    <logger name="net.sourceforge.stripes"><level value="INFO"/></logger>
+    <!--nice for debugging connection pool problems-->
+    <!--<logger name="com.mchange"><level value="DEBUG"/></logger>-->
+    <logger name="org.apache.struts"><level value="INFO"/></logger>
+    <logger name="ConsumerSite"><level value="INFO"/></logger>
+    <logger name="ConsumerSite.Database"><level value="INFO"/></logger>
+    <logger name="ConsumerSite.Presentation.PageLoad.SearchResultsPage"><level value="WARN"/></logger>
+    <logger name="com.grubhub.badger.indexing"><level value="INFO"/></logger>
+    <logger name="com.grubhub.lorna.database.managers.ApplicationSettingManager"><level value="WARN"/></logger>
+    <logger name="com.grubhub.lorna.utility.ApplicationSettingScheduler"><level value="WARN"/></logger>
+    <logger name="com.grubhub.lorna.database"><level value="INFO"/></logger>
+    <logger name="com.grubhub"><level value="INFO"/></logger>
+    <logger name="com"><level value="INFO"/></logger>
+    <logger name="com.grubhub.lorna.database.DatabaseApi"><level value="INFO"/></logger>
+    <logger name="com.grubhub.lorna.database.managers.CustomerManagerImpl"><level value="INFO"/></logger>
+    <logger name="org.apache.jcs"><level value="WARN"/></logger>
+    <logger name="org.apache.catalina.core.ContainerBase"><level value="WARN"/></logger>
+
+    <root>
+        <priority value="WARN"></priority>
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+</log4j:configuration>

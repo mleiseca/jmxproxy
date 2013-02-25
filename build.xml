@@ -1,0 +1,62 @@
+<project name="badger" default="buildWar" basedir=".">
+	<!--
+		.grubhub_build.properties: override build properties with developer-specifics
+	-->
+	<property environment="env"/>
+
+	<property name="build.home" value="${basedir}/build"/>
+	<property name="build.home.classes" value="${basedir}/build/classes"/>
+    <property name="warfile" value="${build.home}/jmxproxy.war"/>
+
+	<path id="build.compile.libs">
+		<filelist dir="web/WEB-INF/lib">
+			<file name="commons-logging-1.1.1.jar"/>
+			<file name="log4j-1.2.16.jar"/>
+			<file name="stripes-1.5.7.jar"/>
+		</filelist>
+	</path>
+
+
+    <path id="compile.classpath">
+        <path refid="build.compile.libs"/>
+    </path>
+
+    <target name="clean"
+            description="Delete old build and dist directories">
+        <delete dir="${build.home}"/>
+    </target>
+
+    <target name="copy-files">
+        <copy todir="${build.home.classes}">
+            <fileset dir="src" includes="**/*xml"/>
+        </copy>
+    </target>
+
+    <property name="build.home.classes" value="${build.home}/classes"/>
+
+    <target name="-compile-classes">
+        <javac srcdir="src"
+               destdir="${build.home.classes}" >
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="compile" description="Compile Java sources"
+            depends="-create-compile-output-dir, -compile-classes"/>
+
+    <target name="-create-compile-output-dir">
+        <!-- Compile Java classes as necessary -->
+        <mkdir dir="${build.home.classes}"/>
+    </target>
+
+    <target name="buildWar"  depends="compile,copy-files" description="Copies app files and builds the war (no compilation)">
+        <war destfile="${warfile}" webxml="web/WEB-INF/web.xml">
+            <lib dir="web/WEB-INF/lib"/>
+            <metainf dir="web/META-INF"/>
+            <classes dir="${build.home.classes}"/>
+            <webinf dir="web/WEB-INF"/>
+            <fileset dir="web"/>
+        </war>
+    </target>
+</project>
+
